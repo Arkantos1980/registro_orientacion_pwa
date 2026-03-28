@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Juego de Orientación</title>
+    
+    <!-- ENLACES PWA (Nuevos) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8A2BE2">
+    
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="[https://unpkg.com/html5-qrcode](https://unpkg.com/html5-qrcode)"></script>
+    <style>
+        .screen { display: none; }
+        .active { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        #reader { width: 100%; max-width: 350px; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-4 m-0 h-screen flex flex-col">
+
+    <!-- PANTALLA 1: INICIO -->
+    <div id="pantalla-inicio" class="screen active fade-in w-full max-w-md mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full text-center">
+            <div class="mb-6 text-blue-600">
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </div>
+            <h1 class="text-3xl font-bold mb-2 text-green-900">Día del Scouter</h1>
+            <h2 class="text-2xl font-bold mb-2 text-[#8A2BE2]">El cementerio encantado</h2>
+            <p class="text-gray-500 mb-6">Selecciona tu equipo para cargar la ruta.</p>
+            
+            <div class="mb-6 text-left">
+                <label for="selectorEquipo" class="block text-sm font-medium text-gray-700 mb-2">Equipo / Ruta:</label>
+                <select id="selectorEquipo" class="block w-full px-4 py-3 border border-gray-300 bg-gray-50 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-lg transition-colors">
+                    <option value="equipoRojo">🔴 Equipo Rojo</option>
+                    <option value="equipoAzul">🔵 Equipo Azul</option>
+                    <option value="equipoVerde">🟢 Equipo Verde</option>
+                    <option value="equipoAmarillo">🟡 Equipo Amarillo</option>
+                </select>
+            </div>
+
+            <button onclick="empezarJuego()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-md transition-transform transform active:scale-95">
+                Empezar Aventura
+            </button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: ESCÁNER -->
+    <div id="pantalla-escaner" class="screen fade-in w-full max-w-md mx-auto">
+        <div class="bg-white p-6 rounded-2xl shadow-lg w-full text-center">
+            <h2 id="tituloEquipo" class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2"></h2>
+            <div id="reader" class="bg-black"></div>
+            
+            <button onclick="iniciarCamara()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-md mb-4 flex items-center justify-center transition-transform transform active:scale-95">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Escanear Baliza
+            </button>
+            
+            <div class="bg-blue-50 rounded-xl p-4 flex justify-between items-center border border-blue-100">
+                <span class="text-blue-800 font-medium">Balizas registradas:</span>
+                <span id="contadorPuntos" class="bg-blue-600 text-white font-bold py-1 px-3 rounded-full text-lg">0</span>
+            </div>
+            
+            <div class="mt-8 border-t pt-4">
+                <p class="text-sm text-gray-600 mb-3 font-medium">Progreso de la ruta:</p>
+                <div id="contenedor-indicadores" class="flex flex-wrap justify-center gap-2 mb-6"></div>
+                
+                <button id="btn-verificar" onclick="verificarRuta()" class="w-full bg-gray-300 text-gray-500 font-bold py-4 px-6 rounded-xl text-lg shadow-md transition-all cursor-not-allowed hidden" disabled>
+                    🔒 Verificar Ruta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 3: RESULTADOS AUTOMÁTICOS -->
+    <div id="pantalla-resultados" class="screen fade-in w-full max-w-md mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full text-center">
+            <h2 class="text-3xl font-bold mb-6 text-gray-900">¡Ruta Terminada!</h2>
+            <div id="mensaje-validacion" class="mb-8 p-4 rounded-xl"></div>
+            
+            <div class="text-left space-y-4 mb-8">
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex justify-between items-center">
+                    <span class="text-gray-600 font-medium">Tiempo total:</span>
+                    <span id="res-tiempo" class="text-xl font-bold text-gray-900"></span>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <span class="text-gray-600 font-medium block mb-2">Tu recorrido:</span>
+                    <div id="res-ruta" class="text-sm font-mono text-gray-800 break-words leading-relaxed"></div>
+                </div>
+            </div>
+            
+            <button onclick="location.reload()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-md transition-transform transform active:scale-95">
+                Volver al Inicio
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- REGISTRO DEL SERVICE WORKER (PWA) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Modo Offline Activado ✅'))
+                    .catch(err => console.error('Error al activar Modo Offline', err));
+            });
+        }
+
+        // --- CONFIGURACIÓN DE LAS RUTAS ---
+        const todasLasRutas = {
+            "equipoRojo":     ["PUNTO_1", "PUNTO_2", "PUNTO_3", "META"],
+            "equipoAzul":     ["PUNTO_3", "PUNTO_1", "PUNTO_2", "META"],
+            "equipoVerde":    ["PUNTO_2", "PUNTO_3", "PUNTO_1", "META"],
+            "equipoAmarillo": ["PUNTO_1", "PUNTO_3", "PUNTO_2", "META"]
+        };
+
+        let rutaCorrecta = []; 
+        let inicioTiempo = 0;
+        let rutaEscaneada = [];
+        let escaner = null;
+
+        function cambiarPantalla(idPantalla) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(idPantalla).classList.add('active');
+        }
+
+        function empezarJuego() {
+            const selector = document.getElementById('selectorEquipo');
+            const idEquipo = selector.value;
+            const nombreEquipoAMostrar = selector.options[selector.selectedIndex].text;
+
+            rutaCorrecta = todasLasRutas[idEquipo];
+            inicioTiempo = Date.now();
+            rutaEscaneada = [];
+            document.getElementById('contadorPuntos').innerText = "0";
+            
+            const contenedorIndicadores = document.getElementById('contenedor-indicadores');
+            contenedorIndicadores.innerHTML = ''; 
+            
+            rutaCorrecta.forEach((_, index) => {
+                const span = document.createElement('span');
+                span.id = `ind-paso-${index + 1}`;
+                span.className = "bg-gray-200 text-gray-700 text-xs py-1 px-3 rounded-full font-bold transition-colors";
+                span.innerText = (index === rutaCorrecta.length - 1) ? "META" : (index + 1);
+                contenedorIndicadores.appendChild(span);
+            });
+            
+            const btnVerificar = document.getElementById('btn-verificar');
+            if(btnVerificar) {
+                btnVerificar.disabled = true;
+                btnVerificar.classList.add('hidden');
+                btnVerificar.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 px-6 rounded-xl text-lg shadow-md transition-all cursor-not-allowed hidden";
+                btnVerificar.innerHTML = "🔒 Verificar Ruta";
+            }
+            
+            document.getElementById('tituloEquipo').innerText = nombreEquipoAMostrar;
+            cambiarPantalla('pantalla-escaner');
+        }
+
+        function procesarQR(textoQR) {
+            const qrLimpio = textoQR.trim();
+
+            if (qrLimpio === "META" && rutaEscaneada.length < rutaCorrecta.length - 1) {
+                mostrarNotificacionTemporal("❌ ¡Aún te faltan balizas para ir a la META!");
+                return;
+            }
+
+            if (rutaEscaneada.includes(qrLimpio)) {
+                mostrarNotificacionTemporal(`La baliza ya está registrada.`);
+                return;
+            }
+
+            rutaEscaneada.push(qrLimpio);
+            document.getElementById('contadorPuntos').innerText = rutaEscaneada.length;
+            
+            const pasoActual = rutaEscaneada.length;
+            const indicador = document.getElementById(`ind-paso-${pasoActual}`);
+            if (indicador) {
+                indicador.className = "bg-green-500 text-white text-xs py-1 px-3 rounded-full font-bold shadow-inner";
+            }
+
+            if (rutaEscaneada.length === rutaCorrecta.length) {
+                mostrarNotificacionTemporal(`¡Ruta completada! 🎉 Busca al guardián para verificar.`);
+                const btnVerificar = document.getElementById('btn-verificar');
+                if (btnVerificar) {
+                    btnVerificar.disabled = false;
+                    btnVerificar.classList.remove('hidden');
+                    btnVerificar.className = "w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-md transition-all cursor-pointer animate-pulse border border-purple-400";
+                    btnVerificar.innerHTML = "✅ Verificar Ruta (Guardián)";
+                }
+            } else {
+                mostrarNotificacionTemporal(`¡Baliza completada!`);
+            }
+        }
+
+        function iniciarCamara() {
+            if (!escaner) { escaner = new Html5Qrcode("reader"); }
+            if (escaner.isScanning) { return; }
+
+            escaner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: {width: 250, height: 250}, aspectRatio: 1.0 },
+                (textoQR) => {
+                    escaner.stop().then(() => { procesarQR(textoQR); }).catch(e => console.error(e));
+                },
+                (errorMessage) => { }
+            ).catch(err => {
+                alert("Acepta los permisos de cámara.");
+            });
+        }
+
+        function mostrarNotificacionTemporal(mensaje) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-xl z-50 transition-opacity duration-300';
+            toast.innerText = mensaje;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2000);
+        }
+
+        function verificarRuta() {
+            const finTiempo = Date.now();
+            const tiempoTotalS = Math.floor((finTiempo - inicioTiempo) / 1000);
+            const minutos = Math.floor(tiempoTotalS / 60);
+            const segundos = tiempoTotalS % 60;
+            document.getElementById('res-tiempo').innerText = `${minutos}m ${segundos}s`;
+
+            let esCorrecta = true;
+            if (rutaEscaneada.length !== rutaCorrecta.length) { esCorrecta = false; } 
+            else {
+                for (let i = 0; i < rutaEscaneada.length; i++) {
+                    if (rutaEscaneada[i] !== rutaCorrecta[i]) { esCorrecta = false; break; }
+                }
+            }
+
+            const contenedorMensaje = document.getElementById('mensaje-validacion');
+            if (esCorrecta) {
+                contenedorMensaje.className = "mb-8 p-6 rounded-2xl bg-green-100 border-2 border-green-500 shadow-inner";
+                contenedorMensaje.innerHTML = `<span class="block text-2xl text-green-700 font-extrabold tracking-tight">¡RUTA PERFECTA!</span>`;
+            } else {
+                contenedorMensaje.className = "mb-8 p-6 rounded-2xl bg-red-100 border-2 border-red-500 shadow-inner";
+                contenedorMensaje.innerHTML = `<span class="block text-2xl text-red-700 font-extrabold tracking-tight">RUTA INCORRECTA</span>`;
+            }
+
+            document.getElementById('res-ruta').innerHTML = rutaEscaneada.join(" ➔ ");
+            cambiarPantalla('pantalla-resultados');
+        }
+    </script>
+</body>
+</html>
