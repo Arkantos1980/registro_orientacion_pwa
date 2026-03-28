@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Juego de Orientación</title>
     
-    <!-- ENLACES PWA (Nuevos) -->
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8A2BE2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Orientación">
     
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <script src="[https://unpkg.com/html5-qrcode](https://unpkg.com/html5-qrcode)"></script>
+    <!-- ✅ URLs corregidas (sin corchetes) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
     <style>
         .screen { display: none; }
         .active { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
@@ -25,7 +30,7 @@
     <div id="pantalla-inicio" class="screen active fade-in w-full max-w-md mx-auto">
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full text-center">
             <div class="mb-6 text-blue-600">
-                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </div>
             <h1 class="text-3xl font-bold mb-2 text-green-900">Día del Scouter</h1>
             <h2 class="text-2xl font-bold mb-2 text-[#8A2BE2]">El cementerio encantado</h2>
@@ -54,7 +59,7 @@
             <div id="reader" class="bg-black"></div>
             
             <button onclick="iniciarCamara()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-md mb-4 flex items-center justify-center transition-transform transform active:scale-95">
-                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 Escanear Baliza
             </button>
             
@@ -74,7 +79,7 @@
         </div>
     </div>
 
-    <!-- PANTALLA 3: RESULTADOS AUTOMÁTICOS -->
+    <!-- PANTALLA 3: RESULTADOS -->
     <div id="pantalla-resultados" class="screen fade-in w-full max-w-md mx-auto">
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full text-center">
             <h2 class="text-3xl font-bold mb-6 text-gray-900">¡Ruta Terminada!</h2>
@@ -102,7 +107,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Modo Offline Activado ✅'))
+                    .then(reg => console.log('Modo Offline Activado ✅', reg.scope))
                     .catch(err => console.error('Error al activar Modo Offline', err));
             });
         }
@@ -147,13 +152,18 @@
             });
             
             const btnVerificar = document.getElementById('btn-verificar');
-            if(btnVerificar) {
+            if (btnVerificar) {
                 btnVerificar.disabled = true;
-                btnVerificar.classList.add('hidden');
                 btnVerificar.className = "w-full bg-gray-300 text-gray-500 font-bold py-4 px-6 rounded-xl text-lg shadow-md transition-all cursor-not-allowed hidden";
                 btnVerificar.innerHTML = "🔒 Verificar Ruta";
             }
             
+            // ✅ Resetear escáner si venía de una partida anterior
+            if (escaner && escaner.isScanning) {
+                escaner.stop().catch(() => {});
+            }
+            escaner = null;
+
             document.getElementById('tituloEquipo').innerText = nombreEquipoAMostrar;
             cambiarPantalla('pantalla-escaner');
         }
@@ -190,23 +200,29 @@
                     btnVerificar.innerHTML = "✅ Verificar Ruta (Guardián)";
                 }
             } else {
-                mostrarNotificacionTemporal(`¡Baliza completada!`);
+                mostrarNotificacionTemporal(`¡Baliza registrada!`);
             }
         }
 
         function iniciarCamara() {
-            if (!escaner) { escaner = new Html5Qrcode("reader"); }
-            if (escaner.isScanning) { return; }
+            // ✅ Si ya hay un escáner activo, no crear otro
+            if (escaner && escaner.isScanning) return;
+
+            if (!escaner) {
+                escaner = new Html5Qrcode("reader");
+            }
 
             escaner.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: {width: 250, height: 250}, aspectRatio: 1.0 },
+                { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
                 (textoQR) => {
-                    escaner.stop().then(() => { procesarQR(textoQR); }).catch(e => console.error(e));
+                    escaner.stop()
+                        .then(() => { procesarQR(textoQR); })
+                        .catch(e => console.error(e));
                 },
-                (errorMessage) => { }
-            ).catch(err => {
-                alert("Acepta los permisos de cámara.");
+                (_errorMessage) => { /* ignorar errores de frame */ }
+            ).catch(_err => {
+                alert("No se pudo acceder a la cámara. Acepta los permisos cuando el navegador lo solicite.");
             });
         }
 
@@ -215,7 +231,10 @@
             toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-xl z-50 transition-opacity duration-300';
             toast.innerText = mensaje;
             document.body.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2000);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
         }
 
         function verificarRuta() {
@@ -226,8 +245,9 @@
             document.getElementById('res-tiempo').innerText = `${minutos}m ${segundos}s`;
 
             let esCorrecta = true;
-            if (rutaEscaneada.length !== rutaCorrecta.length) { esCorrecta = false; } 
-            else {
+            if (rutaEscaneada.length !== rutaCorrecta.length) {
+                esCorrecta = false;
+            } else {
                 for (let i = 0; i < rutaEscaneada.length; i++) {
                     if (rutaEscaneada[i] !== rutaCorrecta[i]) { esCorrecta = false; break; }
                 }
