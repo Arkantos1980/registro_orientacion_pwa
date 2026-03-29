@@ -11,10 +11,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Orientación">
+    <link rel="apple-touch-icon" href="[https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Compass_icon.svg/192px-Compass_icon.svg.png](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Compass_icon.svg/192px-Compass_icon.svg.png)">
     
-    <!-- ✅ URLs corregidas (sin corchetes) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="[https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js](https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js)"></script>
 
     <style>
         .screen { display: none; }
@@ -29,8 +29,8 @@
     <!-- PANTALLA 1: INICIO -->
     <div id="pantalla-inicio" class="screen active fade-in w-full max-w-md mx-auto">
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full text-center">
-            <div class="mb-6 text-blue-600">
-                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <div class="mb-6 text-[#8A2BE2]">
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </div>
             <h1 class="text-3xl font-bold mb-2 text-green-900">Día del Scouter</h1>
             <h2 class="text-2xl font-bold mb-2 text-[#8A2BE2]">El cementerio encantado</h2>
@@ -49,6 +49,12 @@
             <button onclick="empezarJuego()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-md transition-transform transform active:scale-95">
                 Empezar Aventura
             </button>
+
+            <!-- BOTÓN DE INSTALACIÓN PWA (Oculto por defecto) -->
+            <button id="btn-instalar" class="hidden w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl text-lg shadow-md transition-transform transform active:scale-95 flex justify-center items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Instalar App en el móvil
+            </button>
         </div>
     </div>
 
@@ -59,7 +65,7 @@
             <div id="reader" class="bg-black"></div>
             
             <button onclick="iniciarCamara()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-md mb-4 flex items-center justify-center transition-transform transform active:scale-95">
-                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 Escanear Baliza
             </button>
             
@@ -107,10 +113,35 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Modo Offline Activado ✅', reg.scope))
+                    .then(reg => console.log('Modo Offline Activado ✅'))
                     .catch(err => console.error('Error al activar Modo Offline', err));
             });
         }
+
+        // --- LÓGICA DE INSTALACIÓN (BOTÓN) ---
+        let eventoInstalacion = null;
+        const btnInstalar = document.getElementById('btn-instalar');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevenir que Chrome muestre su propio mini-aviso
+            e.preventDefault();
+            // Guardar el evento
+            eventoInstalacion = e;
+            // Mostrar nuestro botón morado
+            btnInstalar.classList.remove('hidden');
+        });
+
+        btnInstalar.addEventListener('click', async () => {
+            if (!eventoInstalacion) return;
+            // Lanzar el aviso del sistema
+            eventoInstalacion.prompt();
+            // Esperar a que el usuario acepte o rechace
+            const { outcome } = await eventoInstalacion.userChoice;
+            if (outcome === 'accepted') {
+                btnInstalar.classList.add('hidden');
+            }
+            eventoInstalacion = null;
+        });
 
         // --- CONFIGURACIÓN DE LAS RUTAS ---
         const todasLasRutas = {
@@ -158,7 +189,6 @@
                 btnVerificar.innerHTML = "🔒 Verificar Ruta";
             }
             
-            // ✅ Resetear escáner si venía de una partida anterior
             if (escaner && escaner.isScanning) {
                 escaner.stop().catch(() => {});
             }
@@ -205,7 +235,6 @@
         }
 
         function iniciarCamara() {
-            // ✅ Si ya hay un escáner activo, no crear otro
             if (escaner && escaner.isScanning) return;
 
             if (!escaner) {
@@ -220,7 +249,7 @@
                         .then(() => { procesarQR(textoQR); })
                         .catch(e => console.error(e));
                 },
-                (_errorMessage) => { /* ignorar errores de frame */ }
+                (_errorMessage) => { }
             ).catch(_err => {
                 alert("No se pudo acceder a la cámara. Acepta los permisos cuando el navegador lo solicite.");
             });
